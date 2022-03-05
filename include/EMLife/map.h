@@ -67,6 +67,14 @@ public:
 		else
 			return undefined;
 	}
+	
+	inline int GetWidth() const {
+		return width;
+	}
+	
+	inline int GetHeight() const {
+		return height;
+	}
 };
 
 
@@ -77,21 +85,15 @@ private:
 	void GetDirs();
 	
 	static inline void Move(Coord& coord, Dir dir, int step=1) {
-		// TODO: 打表
-		switch(dir) {
-		case right:
-			coord.x += step;
-			break;
-		case left:
-			coord.x -= step;
-			break;
-		case down:
-			coord.y += step;
-			break;
-		case up:
-			coord.y -= step;
-			break;
-		}
+		Coord dirs[4] = {
+			{ 1,  0}, // right
+			{-1,  0}, // left
+			{ 0,  1}, // down
+			{ 0, -1}  // up
+		};
+		
+		coord.x += dirs[dir].x * step;
+		coord.y += dirs[dir].y * step;
 	}
 	
 public:
@@ -108,5 +110,5 @@ public:
 };
 
 // FIXME: 调试使用
-void Show(Maze* maze, const char msg[]);
+void Show(Maze* maze);
 #endif //EMLIFE_MAP_H

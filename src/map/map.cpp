@@ -1,15 +1,20 @@
 #include <EMLife/EMLife.h>
 
-void Show(Maze* maze, const char msg[]) {
-	printf("\n%s\n", msg);
-	for(int i=0; i<11; i++) {
-		for(int j=0; j<11; j++) {
-			if(maze->GetBlock({i, j}) == wall)
+void Show(Maze* maze) {
+	putc('\n', stdout);
+	for(int i=0; i<maze->GetHeight(); i++) {
+		for(int j=0; j<maze->GetWidth(); j++) {
+			switch(maze->GetBlock({j, i})) {
+			case wall:
 				printf("🟥 ");
-			else if(maze->GetBlock({i, j}) == road)
+				break;
+			case road:
 				printf("🟦 ");
-			else if(maze->GetBlock({i, j}) == undefined)
+				break;
+			case undefined:
 				printf("🟨 ");
+				break;
+			}
 		}
 		putc('\n', stdout);
 	}
@@ -25,6 +30,7 @@ void MazeBuilder::GetDirs() {
 }
 
 Maze* MazeBuilder::GetMaze(int w, int h) {
+	// 初始化迷宫, 将迷宫每个点设置为0且加入起点, 起点恒为(1, 1)
 	Maze* maze = new Maze(w, h);
 	Maze* maze_temp = new Maze(w, h, undefined);
 	
@@ -32,22 +38,24 @@ Maze* MazeBuilder::GetMaze(int w, int h) {
 	walls.push({1, 1});
 	
 	while(!walls.empty()) {
+		// 在 walls 中随随机选取一点并删除
 		Coord road_coord = walls.top();
 		walls.pop();
 		maze->SetBlock(road_coord, road);
 		
+		// 将 road_point 与其四周随机一个路点打通
 		Dir* dirs = dirs_list[rand()%24]; //NOLINT
 		for(int i=0; i<4; i++) {
 			Coord road_coord_temp = road_coord;
 			Move(road_coord_temp, dirs[i], 2);
 			if(maze_temp->GetBlock(road_coord_temp) == road) {
 				maze->SetBlock(
-					{(road_coord.x + road_coord_temp.x)/2 ,
+					{(road_coord.x + road_coord_temp.x)/2,
 					 (road_coord.y + road_coord_temp.y)/2},
 					road
 				);
 				maze_temp->SetBlock(
-					{(road_coord.x + road_coord_temp.x)/2 ,
+					{(road_coord.x + road_coord_temp.x)/2,
 					 (road_coord.y + road_coord_temp.y)/2},
 					road
 				);
@@ -55,8 +63,10 @@ Maze* MazeBuilder::GetMaze(int w, int h) {
 			}
 		} // TODO: 封装为函数
 		
+		// 将 road_point 设置为路
 		maze_temp->SetBlock(road_coord, road);
 		
+		// 加入 road_point 周围不在 walls 中的墙点
 		for(int i=0; i<4; i++) {
 			Coord road_coord_temp = road_coord;
 			Move(road_coord_temp, dirs[i], 2);
@@ -68,9 +78,6 @@ Maze* MazeBuilder::GetMaze(int w, int h) {
 				walls.push(road_coord_temp);
 			}
 		}
-		
-		Show(maze, "maze");
-		Show(maze_temp, "maze temp");
 	}
 	
 	delete maze_temp;
