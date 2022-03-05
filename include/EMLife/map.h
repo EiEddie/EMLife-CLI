@@ -2,7 +2,6 @@
 
 #include <EMLife/EMLife.h>
 
-
 #ifndef EMLIFE_MAP_H
 #define EMLIFE_MAP_H
 enum Block {
@@ -73,11 +72,12 @@ public:
 
 class MazeBuilder {
 private:
-	Dir dirs_list[24][4];
+	Dir dirs_list[24][4]{};
 	
 	void GetDirs();
 	
 	static inline void Move(Coord& coord, Dir dir, int step=1) {
+		// TODO: 打表
 		switch(dir) {
 		case right:
 			coord.x += step;
@@ -94,16 +94,6 @@ private:
 		}
 	}
 	
-	/**
-	 * \brief 不放回随机抽样
-	 */
-	static inline Coord RandSample(std::vector<Coord>& list) {
-		int rand_num = rand()%list.size(); // NOLINT
-		Coord rand_element = list[rand_num];
-		list.erase(list.begin() + rand_num);
-		return rand_element;
-	}
-	
 public:
 	MazeBuilder() {
 		srand(time(nullptr));
@@ -117,5 +107,6 @@ public:
 	}
 };
 
+// FIXME: 调试使用
 void Show(Maze* maze, const char msg[]);
 #endif //EMLIFE_MAP_H

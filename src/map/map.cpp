@@ -28,10 +28,12 @@ Maze* MazeBuilder::GetMaze(int w, int h) {
 	Maze* maze = new Maze(w, h);
 	Maze* maze_temp = new Maze(w, h, undefined);
 	
-	std::vector<Coord> walls = {{1, 1}};
+	std::stack<Coord> walls;
+	walls.push({1, 1});
 	
 	while(!walls.empty()) {
-		Coord road_coord = RandSample(walls); // TODO: 是否需要随机取样
+		Coord road_coord = walls.top();
+		walls.pop();
 		maze->SetBlock(road_coord, road);
 		
 		Dir* dirs = dirs_list[rand()%24]; //NOLINT
@@ -63,7 +65,7 @@ Maze* MazeBuilder::GetMaze(int w, int h) {
 					&& maze_temp->GetBlock(road_coord_temp) == undefined
 			) {
 				maze_temp->SetBlock(road_coord_temp, wall);
-				walls.push_back(road_coord_temp);
+				walls.push(road_coord_temp);
 			}
 		}
 		

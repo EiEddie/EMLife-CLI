@@ -1,6 +1,7 @@
 #include <cstring>
-#include <stdexcept>
-#include <vector>
+#include <cstdio>
+#include <ctime>
+#include <stack>
 #include <algorithm>
 
 #include <EMLife/map.h>
