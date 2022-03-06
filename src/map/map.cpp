@@ -58,7 +58,7 @@ Maze* MazeBuilder::GetMaze(int w, int h) {
 	walls.push({1, 1});
 	
 	while(!walls.empty()) {
-		// 在 walls 中随随机选取一点并删除
+		// 在 walls 中选取一点并删除
 		Coord road_coord = walls.top();
 		walls.pop();
 		maze->SetBlock(road_coord, road);
