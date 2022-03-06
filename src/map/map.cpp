@@ -6,13 +6,13 @@ void Show(Maze* maze) {
 		for(int j=0; j<maze->GetWidth(); j++) {
 			switch(maze->GetBlock({j, i})) {
 			case wall:
-				printf("🟥 ");
+				printf("🟥");
 				break;
 			case road:
-				printf("🟦 ");
+				printf("🟦");
 				break;
 			case undefined:
-				printf("🟨 ");
+				printf("🟨");
 				break;
 			}
 		}
@@ -20,6 +20,26 @@ void Show(Maze* maze) {
 	}
 	fflush(stdout);
 }
+
+
+const wchar_t* Maze::GetMazeStr() const {
+	wchar_t* str = new wchar_t[(width + 1)*height + 1]{0};
+	std::fill(str, str + (width + 1)*height + 1, L' ');
+	
+	for(int y=0; y<height; y++) {
+		for(int x=0; x<width; x+=(y&0b1) + 1) {
+			if(GetBlock({x, y}) != wall)
+				continue;
+			
+			str[y*(width + 1) + x] = walls_char.Get(GetWallId({x, y}));
+		}
+		str[y*(width + 1) + width] = L'\n';
+	}
+	str[(width + 1)*height] = L'\0';
+	
+	return str;
+}
+
 
 void MazeBuilder::GetDirs() {
 	Dir dirs[4] = {right, left, down, up};
