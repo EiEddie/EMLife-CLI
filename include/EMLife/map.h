@@ -106,6 +106,7 @@ private:
 		
 		return id >> 1;
 	}
+	
 public:
 	Maze(int w, int h, Block blk=wall):
 	width(w), height(h) {

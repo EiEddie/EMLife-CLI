@@ -31,7 +31,10 @@ const wchar_t* Maze::GetMazeStr() const {
 			if(GetBlock({x, y}) != wall)
 				continue;
 			
-			str[2*y*width + 2*x] = walls_char.Get(GetWallId({x, y}));
+			int wall_id = GetWallId({x, y});
+			str[2*y*width + 2*x] = walls_char.Get(wall_id);
+			if(wall_id & 0b1000)
+				str[2*y*width + 2*x + 1] = walls_char.Get(RIGHT_LEFT);
 		}
 		str[2*width*(y + 1) - 1] = L'\n';
 	}
