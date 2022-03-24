@@ -150,7 +150,7 @@ public:
 	 * \brief 获取迷宫字符串
 	 * 使用完应delete
 	 */
-	const wchar_t* GetMazeStr() const ;
+	const wchar_t* GetMazeStr() const;
 };
 
 

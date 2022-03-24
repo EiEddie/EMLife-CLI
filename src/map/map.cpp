@@ -1,8 +1,15 @@
 #include <EMLife/EMLife.h>
 
 const wchar_t* Maze::GetMazeStr() const {
-	wchar_t* str = new wchar_t[2*width*height + 1]{0};
-	std::fill(str, str + (2*width)*height + 1, L' ');
+	// 横向空隙为两格, 包含换行符与字符串尾\0字符
+	/**
+	 * \brief 一行的字符数
+	 *
+	 * 包含\\n
+	 */
+	int length = (width-1)/2*3 + 2;
+	wchar_t* str = new wchar_t[length*height + 1]{0};
+	std::fill(str, str + length*height + 1, L' ');
 	
 	for(int y=0; y<height; y++) {
 		for(int x=0; x<width; x+=(y&0b1) + 1) {
@@ -10,13 +17,18 @@ const wchar_t* Maze::GetMazeStr() const {
 				continue;
 			
 			int wall_id = GetWallId({x, y});
-			str[2*y*width + 2*x] = walls_char.Get(wall_id);
-			if(wall_id & 0b1000)
-				str[2*y*width + 2*x + 1] = walls_char.Get(RIGHT_LEFT);
+			if(x & 0b1) {
+				// 奇数
+				str[y*length + x*3/2]     = walls_char.Get(wall_id);
+				str[y*length + x*3/2 + 1] = walls_char.Get(RIGHT_LEFT);
+			} else {
+				// 偶数
+				str[y*length + x/2*3] = walls_char.Get(wall_id);
+			}
 		}
-		str[2*width*(y + 1) - 1] = L'\n';
+		str[(y + 1)*length - 1] = L'\n';
 	}
-	str[2*width*height] = L'\0';
+	str[length*height] = L'\0';
 	
 	return str;
 }
@@ -39,7 +51,7 @@ Maze* MazeBuilder::GetMaze(int w, int h) {
 	walls.push({1, 1});
 	
 	while(!walls.empty()) {
-		// 在 walls 中随随机选取一点并删除
+		// 在 walls 中选取一点并删除
 		Coord road_coord = walls.top();
 		walls.pop();
 		maze->SetBlock(road_coord, road);
