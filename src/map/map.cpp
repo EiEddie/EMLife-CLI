@@ -1,27 +1,5 @@
 #include <EMLife/EMLife.h>
 
-void Show(Maze* maze) {
-	putc('\n', stdout);
-	for(int i=0; i<maze->GetHeight(); i++) {
-		for(int j=0; j<maze->GetWidth(); j++) {
-			switch(maze->GetBlock({j, i})) {
-			case wall:
-				printf("🟥");
-				break;
-			case road:
-				printf("🟦");
-				break;
-			case undefined:
-				printf("🟨");
-				break;
-			}
-		}
-		putc('\n', stdout);
-	}
-	fflush(stdout);
-}
-
-
 const wchar_t* Maze::GetMazeStr() const {
 	wchar_t* str = new wchar_t[2*width*height + 1]{0};
 	std::fill(str, str + (2*width)*height + 1, L' ');
@@ -84,7 +62,7 @@ Maze* MazeBuilder::GetMaze(int w, int h) {
 				);
 				break;
 			}
-		} // TODO: 封装为函数
+		}
 		
 		// 将 road_point 设置为路
 		maze_temp->SetBlock(road_coord, road);

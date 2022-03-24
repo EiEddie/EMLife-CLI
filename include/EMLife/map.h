@@ -184,7 +184,4 @@ public:
 		delete maze;
 	}
 };
-
-// FIXME: 调试使用
-void Show(Maze* maze);
 #endif //EMLIFE_MAP_H
