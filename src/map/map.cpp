@@ -23,19 +23,19 @@ void Show(Maze* maze) {
 
 
 const wchar_t* Maze::GetMazeStr() const {
-	wchar_t* str = new wchar_t[(width + 1)*height + 1]{0};
-	std::fill(str, str + (width + 1)*height + 1, L' ');
+	wchar_t* str = new wchar_t[2*width*height + 1]{0};
+	std::fill(str, str + (2*width)*height + 1, L' ');
 	
 	for(int y=0; y<height; y++) {
 		for(int x=0; x<width; x+=(y&0b1) + 1) {
 			if(GetBlock({x, y}) != wall)
 				continue;
 			
-			str[y*(width + 1) + x] = walls_char.Get(GetWallId({x, y}));
+			str[2*y*width + 2*x] = walls_char.Get(GetWallId({x, y}));
 		}
-		str[y*(width + 1) + width] = L'\n';
+		str[2*width*(y + 1) - 1] = L'\n';
 	}
-	str[(width + 1)*height] = L'\0';
+	str[2*width*height] = L'\0';
 	
 	return str;
 }
