@@ -26,22 +26,22 @@ enum WallId {
 static struct WallsChar {
 private:
 	wchar_t walls[0b1111 + 1] = {
-		L'\0',
-		L'\u2575',
-		L'\u2577',
-		L'\u2502',
-		L'\u2574',
-		L'\u2518',
-		L'\u2510',
-		L'\u2524',
-		L'\u2576',
-		L'\u2514',
-		L'\u250c',
-		L'\u251c',
-		L'\u2500',
-		L'\u2534',
-		L'\u252c',
-		L'\u253c'
+		L'\u0020', // VOID
+		L'\u2575', // UP
+		L'\u2577', // DOWN
+		L'\u2502', // DOWN_UP
+		L'\u2574', // LEFT
+		L'\u2518', // LEFT_UP
+		L'\u2510', // LEFT_DOWN
+		L'\u2524', // LEFT_DOWN_UP
+		L'\u2576', // RIGHT
+		L'\u2514', // RIGHT_UP
+		L'\u250c', // RIGHT_DOWN
+		L'\u251c', // RIGHT_DOWN_UP
+		L'\u2500', // RIGHT_LEFT
+		L'\u2534', // RIGHT_LEFT_UP
+		L'\u252c', // RIGHT_LEFT_DOWN
+		L'\u253c'  // RIGHT_LEFT_DOWN_UP
 	};
 	
 public:
@@ -82,8 +82,8 @@ struct Coord {
 };
 
 
-struct Maze {
-private:
+class MazeBase {
+protected:
 	int width, height;
 	
 	Block* maze = new Block[width * height];
@@ -108,12 +108,12 @@ private:
 	}
 	
 public:
-	Maze(int w, int h, Block blk=wall):
+	MazeBase(int w, int h, Block blk=wall):
 	width(w), height(h) {
 		std::fill(maze, maze + width*height, blk);
 	}
 	
-	~Maze() {
+	~MazeBase() {
 		delete[] maze;
 	}
 	
@@ -145,12 +145,70 @@ public:
 	inline int GetHeight() const {
 		return height;
 	}
+};
+
+
+/**
+ * \brief 源迷宫
+ *
+ * 横向间距为一格, 墙与路皆为一格
+ *
+ * \example
+ * \verbatim
+ * ┌───┬─┬───┐
+ * │   │ │   │
+ * ├─╴ ╵ ├─╴ │
+ * │     │   │
+ * ├───╴ └─╴ │
+ * │         │
+ * └─────────┘
+ * \endverbatim
+ */
+class MazeSrc: public MazeBase {
+public:
+	MazeSrc(int w, int h, Block blk=wall):
+	MazeBase(w, h, blk) {}
+};
+
+
+/**
+ * \brief 游戏逻辑与显示使用的迷宫
+ *
+ * 横向间距为两格
+ *
+ * \example
+ * \verbatim
+ * ┌─────┬──┬─────┐
+ * │     │  │     │
+ * ├──╴  ╵  ├──╴  │
+ * │        │     │
+ * ├─────╴  └──╴  │
+ * │              │
+ * └──────────────┘
+ * \endverbatim
+ */
+class Maze: public MazeBase {
+private:
+	int width_src;
+	
+public:
+	Maze(int w, int h, Block blk=wall):
+	width_src(w),
+	MazeBase((w-1)/2*3 + 1, h, blk) {}
 	
 	/**
 	 * \brief 获取迷宫字符串
 	 * 使用完应delete
 	 */
 	const wchar_t* GetMazeStr() const;
+	
+	inline int GetSrcWidth() const {
+		return width_src;
+	}
+	
+	inline int GetSrcHeight() const {
+		return height;
+	}
 };
 
 
@@ -172,15 +230,31 @@ private:
 		coord.y += dirs[dir].y * step;
 	}
 	
+	MazeSrc* GetMazeSrc(int w, int h) const;
+	
+	inline void DestroyMazeSrc(MazeSrc* maze) const {
+		delete maze;
+	}
+	
+	void MazeSrcToMaze(Maze* dest, MazeSrc* src) const;
+	
 public:
 	MazeBuilder() {
 		srand(time(nullptr));
 		GetDirs();
 	}
 	
-	Maze* GetMaze(int w, int h);
+	inline Maze* GetMaze(int w, int h) const {
+		MazeSrc* maze_src = GetMazeSrc(w, h);
+		Maze* maze = new Maze(w, h);
+		
+		MazeSrcToMaze(maze, maze_src);
+		
+		DestroyMazeSrc(maze_src);
+		return maze;
+	}
 	
-	inline void DestroyMaze(Maze* maze) {
+	inline void DestroyMaze(Maze* maze) const {
 		delete maze;
 	}
 };
