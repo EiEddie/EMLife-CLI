@@ -5,21 +5,21 @@
 #ifndef EMLIFE_MAP_H
 #define EMLIFE_MAP_H
 enum WallId {
-	UP                 = 0b0001,
-	DOWN               = 0b0010,
-	DOWN_UP            = 0b0011,
-	LEFT               = 0b0100,
-	LEFT_UP            = 0b0101,
-	LEFT_DOWN          = 0b0110,
-	LEFT_DOWN_UP       = 0b0111,
-	RIGHT              = 0b1000,
-	RIGHT_UP           = 0b1001,
-	RIGHT_DOWN         = 0b1010,
-	RIGHT_DOWN_UP      = 0b1011,
-	RIGHT_LEFT         = 0b1100,
-	RIGHT_LEFT_UP      = 0b1101,
-	RIGHT_LEFT_DOWN    = 0b1110,
-	RIGHT_LEFT_DOWN_UP = 0b1111
+	WALL_UP                 = 0b0001,
+	WALL_DOWN               = 0b0010,
+	WALL_DOWN_UP            = 0b0011,
+	WALL_LEFT               = 0b0100,
+	WALL_LEFT_UP            = 0b0101,
+	WALL_LEFT_DOWN          = 0b0110,
+	WALL_LEFT_DOWN_UP       = 0b0111,
+	WALL_RIGHT              = 0b1000,
+	WALL_RIGHT_UP           = 0b1001,
+	WALL_RIGHT_DOWN         = 0b1010,
+	WALL_RIGHT_DOWN_UP      = 0b1011,
+	WALL_RIGHT_LEFT         = 0b1100,
+	WALL_RIGHT_LEFT_UP      = 0b1101,
+	WALL_RIGHT_LEFT_DOWN    = 0b1110,
+	WALL_RIGHT_LEFT_DOWN_UP = 0b1111
 };
 
 
@@ -38,7 +38,7 @@ private:
 		L'\u2514', // RIGHT_UP
 		L'\u250c', // RIGHT_DOWN
 		L'\u251c', // RIGHT_DOWN_UP
-		L'\u2500', // RIGHT_LEFT
+		L'\u2500', // WALL_RIGHT_LEFT
 		L'\u2534', // RIGHT_LEFT_UP
 		L'\u252c', // RIGHT_LEFT_DOWN
 		L'\u253c'  // RIGHT_LEFT_DOWN_UP
@@ -56,9 +56,9 @@ public:
 
 
 enum Block {
-	undefined = -1,
-	road      =  0,
-	wall      =  1
+	UNDEFINED = -1,
+	ROAD      =  0,
+	WALL      =  1
 };
 
 
@@ -67,10 +67,10 @@ enum Block {
  * 按坐标方式排列: 先横再纵, 先右再左, 先下再上
  */
 enum Dir {
-	right = 0,
-	left  = 1,
-	down  = 2,
-	up    = 3
+	RIGHT = 0,
+	LEFT  = 1,
+	DOWN  = 2,
+	UP    = 3
 };
 
 
@@ -91,16 +91,16 @@ protected:
 	inline int GetWallId(const Coord& coord) const {
 		int id = 0;
 		Coord dirs[4] = {
-			{ 1,  0}, // right
-			{-1,  0}, // left
-			{ 0,  1}, // down
-			{ 0, -1}  // up
+			{ 1,  0}, // RIGHT
+			{-1,  0}, // LEFT
+			{ 0,  1}, // DOWN
+			{ 0, -1}  // UP
 		};
 		
 		for(Coord dir: dirs) {
 			id |= GetBlock(
 				{coord.x + dir.x, coord.y + dir.y}
-			) == wall;
+			) == WALL;
 			id <<= 1;
 		}
 		
@@ -108,7 +108,7 @@ protected:
 	}
 	
 public:
-	MazeBase(int w, int h, Block blk=wall):
+	MazeBase(int w, int h, Block blk=WALL):
 	width(w), height(h) {
 		std::fill(maze, maze + width*height, blk);
 	}
@@ -135,7 +135,7 @@ public:
 		if(In(coord))
 			return maze[coord.y*width + coord.x];
 		else
-			return undefined;
+			return UNDEFINED;
 	}
 	
 	inline int GetWidth() const {
@@ -166,7 +166,7 @@ public:
  */
 class MazeSrc: public MazeBase {
 public:
-	MazeSrc(int w, int h, Block blk=wall):
+	MazeSrc(int w, int h, Block blk=WALL):
 	MazeBase(w, h, blk) {}
 };
 
@@ -192,7 +192,7 @@ private:
 	int width_src;
 	
 public:
-	Maze(int w, int h, Block blk=wall):
+	Maze(int w, int h, Block blk=WALL):
 	width_src(w),
 	MazeBase((w-1)/2*3 + 1, h, blk) {}
 	
@@ -220,10 +220,10 @@ private:
 	
 	static inline void Move(Coord& coord, Dir dir, int step=1) {
 		Coord dirs[4] = {
-			{ 1,  0}, // right
-			{-1,  0}, // left
-			{ 0,  1}, // down
-			{ 0, -1}  // up
+			{ 1,  0}, // RIGHT
+			{-1,  0}, // LEFT
+			{ 0,  1}, // DOWN
+			{ 0, -1}  // UP
 		};
 		
 		coord.x += dirs[dir].x * step;
