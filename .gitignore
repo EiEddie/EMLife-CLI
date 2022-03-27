@@ -16,6 +16,3 @@ test/[Bb]in/
 
 # Test build folder
 test/[Bb]uild/
-
-# Test sketch
-test/sketch/
