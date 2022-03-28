@@ -258,4 +258,63 @@ public:
 		delete maze;
 	}
 };
+
+
+/**
+ * \brief 迷宫中的物品
+ **/
+enum Item {
+	NONE    = 0,
+	COIN    = 1,
+	DIAMOND = 2
+};
+
+
+// TODO: 完成此类
+/**
+ * \brief 生成与管理迷宫中的物品
+ */
+class ItemManager {
+private:
+	Item* items;
+	
+public:
+	ItemManager(Maze* maze, int coin_count, int diamond_count);
+};
+
+
+// TODO: 完成此类
+/**
+ * \brief 管理迷宫中游荡的怪物
+ */
+class DemonManager {
+private:
+	/**
+	 * \brief 怪物
+	 */
+	struct Demon {
+		/**
+		 * \brief demon的移动路径
+		 */
+		std::list<Coord> coord_list;
+		
+		/**
+		 * \brief demon当前位置
+		 */
+		std::list<Coord>::iterator coord;
+	};
+};
+
+
+/**
+ * \brief 游戏地图
+ */
+class Map {
+private:
+	Maze* maze;
+	
+public:
+	Map(int w, int h):
+	maze(new Maze(w, h)) {}
+};
 #endif //EMLIFE_MAP_H

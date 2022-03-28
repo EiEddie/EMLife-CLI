@@ -4,5 +4,6 @@
 #include <cwchar>
 #include <stack>
 #include <algorithm>
+#include <list>
 
 #include <EMLife/map.h>
