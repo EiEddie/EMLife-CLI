@@ -1,2 +1,5 @@
-# EMLife-cli
-EMLife命令行版
+# EMLife-CLI
+
+✨ EMLife For Command Line!
+
+**_In development._**
