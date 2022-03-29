@@ -79,6 +79,17 @@ struct Coord {
 	
 	Coord(int x=-1, int y=-1):
 	x(x), y(y) {}
+	
+	bool operator==(const Coord& val) const {
+		if(x == val.x && y == val.y)
+			return true;
+		else
+			return false;
+	}
+	
+	bool operator!=(const Coord& val) const {
+		return !(*this == val);
+	}
 };
 
 
@@ -297,7 +308,11 @@ public:
  * \brief 管理迷宫中游荡的怪物
  */
 class DemonManager {
+#ifdef DEBUG
+public:
+#else
 private:
+#endif // DEBUG
 	/**
 	 * \brief 怪物
 	 */
