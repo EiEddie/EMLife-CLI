@@ -108,7 +108,7 @@ protected:
 	}
 	
 public:
-	MazeBase(int w, int h, Block blk=WALL):
+	explicit MazeBase(int w, int h, Block blk=WALL):
 	width(w), height(h) {
 		std::fill(maze, maze + width*height, blk);
 	}
@@ -126,9 +126,18 @@ public:
 		return temp;
 	}
 	
-	inline void SetBlock(const Coord& coord, Block blk) {
-		if(In(coord))
+	/**
+	 * \return 是否成功设置
+	 * \retval  1 成功
+	 * \retval -1 失败: 坐标不在迷宫内
+	 */
+	inline int SetBlock(const Coord& coord, Block blk) {
+		if(In(coord)) {
 			maze[coord.y*width + coord.x] = blk;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 	
 	inline Block GetBlock(const Coord& coord) const {
@@ -166,7 +175,7 @@ public:
  */
 class MazeSrc: public MazeBase {
 public:
-	MazeSrc(int w, int h, Block blk=WALL):
+	explicit MazeSrc(int w, int h, Block blk=WALL):
 	MazeBase(w, h, blk) {}
 };
 
@@ -192,7 +201,7 @@ private:
 	int width_src;
 	
 public:
-	Maze(int w, int h, Block blk=WALL):
+	explicit Maze(int w, int h, Block blk=WALL):
 	width_src(w),
 	MazeBase((w-1)/2*3 + 1, h, blk) {}
 	
@@ -239,7 +248,7 @@ private:
 	void MazeSrcToMaze(Maze* dest, MazeSrc* src) const;
 	
 public:
-	MazeBuilder() {
+	explicit MazeBuilder() {
 		srand(time(nullptr));
 		GetDirs();
 	}
@@ -293,15 +302,66 @@ private:
 	 * \brief 怪物
 	 */
 	struct Demon {
+	private:
+		/**
+		 * \brief demon总步数
+		 */
+		int step_count;
+		
 		/**
 		 * \brief demon的移动路径
 		 */
-		std::list<Coord> coord_list;
+		Coord* path = new Coord[step_count];
 		
 		/**
-		 * \brief demon当前位置
+		 * \brief demon当前位置在path内的下标
 		 */
-		std::list<Coord>::iterator coord;
+		int coord_index = 0;
+		
+		/**
+		 * \brief 行进方向
+		 *
+		 *  1 正向
+		 * -1 反向
+		 */
+		int dir = 1;
+		
+	public:
+		explicit Demon(int step_count=5):
+		step_count(step_count) {}
+		
+		~Demon() {
+			delete[] path;
+		}
+		
+		/**
+		 * \param step_len 步长
+		 */
+		inline void Move(int step_len=1) {
+			// 若到达路径头或尾, 反向运动
+			if(coord_index + dir == -1 || coord_index + dir == step_count)
+				dir *= -1;
+			
+			coord_index += dir*step_len;
+		}
+		
+		/**
+		 * \return 是否成功设置
+		 * \retval  1 成功
+		 * \retval -1 失败: 下标越界
+		 */
+		inline int SetPath(int index, const Coord& coord) {
+			if(index > -1 && index < step_count) {
+				path[index] = coord;
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+		
+		inline Coord GetPos() {
+			return path[coord_index];
+		}
 	};
 };
 
