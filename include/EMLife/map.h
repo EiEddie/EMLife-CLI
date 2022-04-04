@@ -298,8 +298,17 @@ class ItemManager {
 private:
 	Item* items;
 	
+	/**
+	 * \brief 不放回随机抽样
+	 *
+	 * 在vector内不放回地抽取一个元素
+	 * 此元素在vector内会被移动至末尾
+	 * 使用前需初始化随机数生成器
+	 */
+	Coord GetCoordFromVector(std::vector<Coord>& vec) const;
+	
 public:
-	ItemManager(Maze* maze, int coin_count, int diamond_count);
+	ItemManager(const Maze* maze, int coin_count, int diamond_count);
 };
 
 

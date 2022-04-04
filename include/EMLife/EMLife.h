@@ -4,5 +4,9 @@
 #include <cwchar>
 #include <stack>
 #include <algorithm>
+#include <vector>
+#include <exception>
+#include <stdexcept>
 
 #include <EMLife/map.h>
+#include <EMLife/eml_exception.h>
