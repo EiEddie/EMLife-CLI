@@ -1,29 +1,41 @@
 #include <EMLife/EMLife.h>
 
-ItemManager::ItemManager(const Maze* maze, int coin_count, int diamond_count) {
-	items = new Item[maze->GetWidth()*maze->GetHeight()]{NONE};
-	std::vector<Coord> coord_list;
+ItemManager::ItemManager(const Maze* maze):
+width(maze->GetWidth()), height(maze->GetHeight()) {
+	srand(time(nullptr));
 	
 	// TODO: 更好的生成算法
+	SetCoordList(maze);
+}
+
+void ItemManager::SetItem(int coin, int diamond) {
+	try {
+		for(int d=0; d<diamond; d++) {
+			Coord coord = GetCoordFromVector(coord_list);
+			items[coord.y*width + coord.x] = DIAMOND;
+			diamond_count++;
+		}
+	} catch(std::out_of_range& error) {
+		throw DiamondTooMuch();
+	}
+	
+	try {
+		for(int c=0; c<coin; c++) {
+			Coord coord = GetCoordFromVector(coord_list);
+			items[coord.y*width + coord.x] = COIN;
+			coin_count++;
+		}
+	} catch(std::out_of_range& error) {
+		throw CoinTooMuch(coin_count);
+	}
+}
+
+void ItemManager::SetCoordList(const Maze* maze) {
 	for(int y=1; y<maze->GetHeight(); y++) {
 		for(int x=1; x<maze->GetWidth(); x+=2) {
 			if(maze->GetBlock({x, y}) == ROAD && maze->GetBlock({x+1, y}) == ROAD)
 				coord_list.emplace_back(x, y);
 		}
-	}
-	
-	srand(time(nullptr));
-	try {
-		for(int i = 0; i < diamond_count; i++) {
-			Coord coord = GetCoordFromVector(coord_list);
-			items[coord.y*maze->GetWidth() + coord.x] = DIAMOND;
-		}
-		for(int i = 0; i < coin_count; i++) {
-			Coord coord = GetCoordFromVector(coord_list);
-			items[coord.y*maze->GetWidth() + coord.x] = COIN;
-		}
-	} catch(std::out_of_range& error) {
-		throw ItemTooMuch();
 	}
 }
 

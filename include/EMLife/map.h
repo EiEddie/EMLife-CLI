@@ -296,7 +296,9 @@ enum Item {
  */
 class ItemManager {
 private:
-	Item* items;
+	int width, height;
+	
+	Item* items = new Item[width*height]{NONE};
 	
 	/**
 	 * \brief 不放回随机抽样
@@ -307,8 +309,17 @@ private:
 	 */
 	Coord GetCoordFromVector(std::vector<Coord>& vec) const;
 	
+	std::vector<Coord> coord_list;
+	
+	void SetCoordList(const Maze* maze);
+	
+	int coin_count = 0;
+	int diamond_count = 0;
+	
 public:
-	ItemManager(const Maze* maze, int coin_count, int diamond_count);
+	explicit ItemManager(const Maze* maze);
+	
+	void SetItem(int coin, int diamond);
 };
 
 

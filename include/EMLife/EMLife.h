@@ -9,4 +9,4 @@
 #include <stdexcept>
 
 #include <EMLife/map.h>
-#include <EMLife/eml_exception.h>
+#include <EMLife/emlexcept.h>
