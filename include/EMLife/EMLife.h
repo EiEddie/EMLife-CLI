@@ -1,10 +1,9 @@
 #include <cstring>
-#include <cstdio>
 #include <ctime>
-#include <cwchar>
-#include <stack>
-#include <algorithm>
 #include <vector>
+#include <stack>
+#include <list>
+#include <algorithm>
 #include <random>
 
 #include <EMLife/map.h>
