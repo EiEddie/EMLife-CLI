@@ -263,6 +263,14 @@ public:
 		
 		return items[coord.x + coord.y*width];
 	}
+	
+	inline int GetWidth() const {
+		return width;
+	}
+	
+	inline int GetHeight() const {
+		return height;
+	}
 };
 
 
