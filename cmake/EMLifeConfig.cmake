@@ -13,5 +13,3 @@ list(FILTER SRC_FILE EXCLUDE REGEX "main")
 
 
 add_library(EMLife ${SRC_FILE})
-
-target_link_libraries(EMLife spdlog::spdlog spdlog::spdlog_header_only)
