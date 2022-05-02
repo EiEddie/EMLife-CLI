@@ -17,8 +17,12 @@ void ShowMaze(const Maze* maze) {
 void ShowItems(const ItemManager* im) {
 	for(int y=0; y<im->GetHeight(); y++) {
 		for(int x=0; x<im->GetWidth(); x++) {
-			Item temp = im->GetItem({x, y});
-			switch(temp) {
+			if(im->GetMazeEndPoint() == Coord(x, y)) {
+				printf("🚩");
+				continue;
+			}
+			
+			switch(im->GetItem({x, y})) {
 			case NONE:
 				printf("  ");
 				break;
@@ -29,9 +33,6 @@ void ShowItems(const ItemManager* im) {
 				printf("💎");
 				break;
 			}
-			
-			if(im->GetMazeEndPoint() == Coord(x, y))
-				printf("🚩");
 		}
 		putc('\n', stdout);
 	}

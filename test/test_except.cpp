@@ -8,4 +8,11 @@ TEST(EMLifeTest, test_except) {
 	em.CreateError(FAILED_TO_SPECIFY_ALL_DIAMOND);
 	
 	em.PrintAll();
+	
+	
+	WarningManager wm;
+	
+	wm.CreateFailedToSpecifyAllCoin(10);
+	
+	wm.PrintAll();
 }
