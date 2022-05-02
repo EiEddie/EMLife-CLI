@@ -39,17 +39,3 @@ void ItemManager::SetCoordList(std::vector<Coord>* coord_list) {
 		}
 	}
 }
-
-int ItemManager::Init(int coin, int diamond) {
-	std::vector<Coord> coord_list;
-	
-	SetCoordList(&coord_list);
-	
-	// 打乱列表
-	std::shuffle(
-		coord_list.begin(), coord_list.end(),
-		std::mt19937(std::random_device()())
-	);
-	
-	return SetItem(coin, diamond, coord_list);
-}

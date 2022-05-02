@@ -239,10 +239,29 @@ public:
 		delete[] items;
 	}
 	
-	int Init(int coin, int diamond);
+	inline int Init(int coin, int diamond) {
+		std::vector<Coord> coord_list;
+		
+		SetCoordList(&coord_list);
+		
+		// 打乱列表
+		std::shuffle(
+			coord_list.begin(), coord_list.end(),
+			std::mt19937(std::random_device()())
+		);
+		
+		return SetItem(coin, diamond, coord_list);
+	}
 	
-	inline Coord GetMazeEndPoint() {
+	inline Coord GetMazeEndPoint() const {
 		return maze_endpoint;
+	}
+	
+	inline Item GetItem(const Coord& coord) const {
+		if(!maze->In(coord))
+			return NONE;
+		
+		return items[coord.x + coord.y*width];
 	}
 };
 
