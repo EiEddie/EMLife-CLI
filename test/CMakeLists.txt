@@ -50,3 +50,15 @@ target_link_libraries(test_map_items
 	EMLife
 	GTest::gmock GTest::gtest GTest::gmock_main GTest::gtest_main
 )
+
+
+# test_except
+set(TEST_EXCEPT_FILE
+	"${PROJECT_SOURCE_DIR}/test_except.cpp"
+)
+add_executable(test_except ${TEST_EXCEPT_FILE})
+
+target_link_libraries(test_except
+	EMLife
+	GTest::gmock GTest::gtest GTest::gmock_main GTest::gtest_main
+)

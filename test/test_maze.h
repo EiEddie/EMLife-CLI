@@ -1,4 +1,5 @@
 #include <EMLife/EMLife.h>
+#include <cstdio>
 
 #ifndef EMLIFE_TEST_MAZE_H
 #define EMLIFE_TEST_MAZE_H
