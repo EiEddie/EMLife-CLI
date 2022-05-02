@@ -4,55 +4,55 @@
 
 #ifndef EMLIFE_MAP_H
 #define EMLIFE_MAP_H
-enum WallId {
-	WALL_UP                 = 0b0001,
-	WALL_DOWN               = 0b0010,
-	WALL_DOWN_UP            = 0b0011,
-	WALL_LEFT               = 0b0100,
-	WALL_LEFT_UP            = 0b0101,
-	WALL_LEFT_DOWN          = 0b0110,
-	WALL_LEFT_DOWN_UP       = 0b0111,
-	WALL_RIGHT              = 0b1000,
-	WALL_RIGHT_UP           = 0b1001,
-	WALL_RIGHT_DOWN         = 0b1010,
-	WALL_RIGHT_DOWN_UP      = 0b1011,
-	WALL_RIGHT_LEFT         = 0b1100,
-	WALL_RIGHT_LEFT_UP      = 0b1101,
-	WALL_RIGHT_LEFT_DOWN    = 0b1110,
-	WALL_RIGHT_LEFT_DOWN_UP = 0b1111
-};
-
-
-static struct WallsChar {
-private:
-	wchar_t walls[0b1111 + 1] = {
-		L'\u0020', // VOID
-		L'\u2575', // UP
-		L'\u2577', // DOWN
-		L'\u2502', // DOWN_UP
-		L'\u2574', // LEFT
-		L'\u2518', // LEFT_UP
-		L'\u2510', // LEFT_DOWN
-		L'\u2524', // LEFT_DOWN_UP
-		L'\u2576', // RIGHT
-		L'\u2514', // RIGHT_UP
-		L'\u250c', // RIGHT_DOWN
-		L'\u251c', // RIGHT_DOWN_UP
-		L'\u2500', // WALL_RIGHT_LEFT
-		L'\u2534', // RIGHT_LEFT_UP
-		L'\u252c', // RIGHT_LEFT_DOWN
-		L'\u253c'  // RIGHT_LEFT_DOWN_UP
-	};
-	
-public:
-	wchar_t Get(int id) const {
-		return walls[id];
-	}
-	
-	wchar_t Get(WallId id) const {
-		return walls[id];
-	}
-} walls_char;
+//enum WallId {
+//	WALL_UP                 = 0b0001,
+//	WALL_DOWN               = 0b0010,
+//	WALL_DOWN_UP            = 0b0011,
+//	WALL_LEFT               = 0b0100,
+//	WALL_LEFT_UP            = 0b0101,
+//	WALL_LEFT_DOWN          = 0b0110,
+//	WALL_LEFT_DOWN_UP       = 0b0111,
+//	WALL_RIGHT              = 0b1000,
+//	WALL_RIGHT_UP           = 0b1001,
+//	WALL_RIGHT_DOWN         = 0b1010,
+//	WALL_RIGHT_DOWN_UP      = 0b1011,
+//	WALL_RIGHT_LEFT         = 0b1100,
+//	WALL_RIGHT_LEFT_UP      = 0b1101,
+//	WALL_RIGHT_LEFT_DOWN    = 0b1110,
+//	WALL_RIGHT_LEFT_DOWN_UP = 0b1111
+//};
+//
+//
+//struct WallsChar {
+//private:
+//	constexpr static wchar_t walls[0b1111 + 1] = {
+//		L'\u0020', // VOID
+//		L'\u2575', // UP
+//		L'\u2577', // DOWN
+//		L'\u2502', // DOWN_UP
+//		L'\u2574', // LEFT
+//		L'\u2518', // LEFT_UP
+//		L'\u2510', // LEFT_DOWN
+//		L'\u2524', // LEFT_DOWN_UP
+//		L'\u2576', // RIGHT
+//		L'\u2514', // RIGHT_UP
+//		L'\u250c', // RIGHT_DOWN
+//		L'\u251c', // RIGHT_DOWN_UP
+//		L'\u2500', // WALL_RIGHT_LEFT
+//		L'\u2534', // RIGHT_LEFT_UP
+//		L'\u252c', // RIGHT_LEFT_DOWN
+//		L'\u253c'  // RIGHT_LEFT_DOWN_UP
+//	};
+//
+//public:
+//	static wchar_t Get(int id) {
+//		return walls[id];
+//	}
+//
+//	static wchar_t Get(WallId id) {
+//		return walls[id];
+//	}
+//};
 
 
 enum Block {
@@ -93,7 +93,7 @@ struct Coord {
 };
 
 
-class MazeBase {
+class Maze {
 protected:
 	int width, height;
 	
@@ -119,12 +119,12 @@ protected:
 	}
 	
 public:
-	explicit MazeBase(int w, int h, Block blk=WALL):
+	explicit Maze(int w, int h, Block blk=WALL):
 	width(w), height(h) {
 		std::fill(maze, maze + width*height, blk);
 	}
 	
-	~MazeBase() {
+	~Maze() {
 		delete[] maze;
 	}
 	
@@ -168,70 +168,6 @@ public:
 };
 
 
-/**
- * \brief 源迷宫
- *
- * 横向间距为一格, 墙与路皆为一格
- *
- * \example
- * \verbatim
- * ┌───┬─┬───┐
- * │   │ │   │
- * ├─╴ ╵ ├─╴ │
- * │     │   │
- * ├───╴ └─╴ │
- * │         │
- * └─────────┘
- * \endverbatim
- */
-class MazeSrc: public MazeBase {
-public:
-	explicit MazeSrc(int w, int h, Block blk=WALL):
-	MazeBase(w, h, blk) {}
-};
-
-
-/**
- * \brief 游戏逻辑与显示使用的迷宫
- *
- * 横向间距为两格
- *
- * \example
- * \verbatim
- * ┌─────┬──┬─────┐
- * │     │  │     │
- * ├──╴  ╵  ├──╴  │
- * │        │     │
- * ├─────╴  └──╴  │
- * │              │
- * └──────────────┘
- * \endverbatim
- */
-class Maze: public MazeBase {
-private:
-	int width_src;
-	
-public:
-	explicit Maze(int w, int h, Block blk=WALL):
-	width_src(w),
-	MazeBase((w-1)/2*3 + 1, h, blk) {}
-	
-	/**
-	 * \brief 获取迷宫字符串
-	 * 使用完应delete
-	 */
-	const wchar_t* GetMazeStr() const;
-	
-	inline int GetSrcWidth() const {
-		return width_src;
-	}
-	
-	inline int GetSrcHeight() const {
-		return height;
-	}
-};
-
-
 class MazeBuilder {
 private:
 	Dir dirs_list[24][4]{};
@@ -250,29 +186,13 @@ private:
 		coord.y += dirs[dir].y * step;
 	}
 	
-	MazeSrc* GetMazeSrc(int w, int h) const;
-	
-	inline void DestroyMazeSrc(MazeSrc* maze) const {
-		delete maze;
-	}
-	
-	void MazeSrcToMaze(Maze* dest, MazeSrc* src) const;
-	
 public:
 	explicit MazeBuilder() {
 		srand(time(nullptr));
 		GetDirs();
 	}
 	
-	inline Maze* GetMaze(int w, int h) const {
-		MazeSrc* maze_src = GetMazeSrc(w, h);
-		Maze* maze = new Maze(w, h);
-		
-		MazeSrcToMaze(maze, maze_src);
-		
-		DestroyMazeSrc(maze_src);
-		return maze;
-	}
+	Maze* GetMaze(int w, int h) const;
 	
 	inline void DestroyMaze(Maze* maze) const {
 		delete maze;
@@ -296,30 +216,34 @@ enum Item {
  */
 class ItemManager {
 private:
+	const Maze* maze;
+	
 	int width, height;
 	
 	Item* items = new Item[width*height]{NONE};
 	
-	/**
-	 * \brief 不放回随机抽样
-	 *
-	 * 在vector内不放回地抽取一个元素
-	 * 此元素在vector内会被移动至末尾
-	 * 使用前需初始化随机数生成器
-	 */
-	Coord GetCoordFromVector(std::vector<Coord>& vec) const;
+	Coord maze_endpoint;
 	
-	std::vector<Coord> coord_list;
+private:
+	void SetCoordList(std::vector<Coord>* coord_list);
 	
-	void SetCoordList(const Maze* maze);
-	
-	int coin_count = 0;
-	int diamond_count = 0;
+	int SetItem(int coin, int diamond, const std::vector<Coord>& coord_list);
 	
 public:
-	explicit ItemManager(const Maze* maze);
+	explicit ItemManager(const Maze* maze):
+	maze(maze), width(maze->GetWidth()), height(maze->GetHeight()) {
+		srand(time(nullptr));
+	}
 	
-	void SetItem(int coin, int diamond);
+	~ItemManager() {
+		delete[] items;
+	}
+	
+	int Init(int coin, int diamond);
+	
+	inline Coord GetMazeEndPoint() {
+		return maze_endpoint;
+	}
 };
 
 

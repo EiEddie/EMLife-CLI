@@ -5,8 +5,7 @@
 #include <stack>
 #include <algorithm>
 #include <vector>
-#include <exception>
-#include <stdexcept>
+#include <random>
 
 #include <EMLife/map.h>
 #include <EMLife/emlexcept.h>

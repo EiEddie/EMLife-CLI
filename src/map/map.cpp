@@ -1,60 +1,55 @@
 #include <EMLife/EMLife.h>
 
-ItemManager::ItemManager(const Maze* maze):
-width(maze->GetWidth()), height(maze->GetHeight()) {
-	srand(time(nullptr));
+int ItemManager::SetItem(int coin, int diamond, const std::vector<Coord>& coord_list) {
+	auto iter = coord_list.begin();
 	
-	// TODO: 更好的生成算法
-	SetCoordList(maze);
-}
-
-void ItemManager::SetItem(int coin, int diamond) {
-	try {
-		for(int d=0; d<diamond; d++) {
-			Coord coord = GetCoordFromVector(coord_list);
-			items[coord.y*width + coord.x] = DIAMOND;
-			diamond_count++;
-		}
-	} catch(std::out_of_range& error) {
-		throw DiamondTooMuch();
+	// 设置终点
+	if(iter == coord_list.end())
+		return FAILED_TO_SPECIFY_ENDPOINT;
+	maze_endpoint = *iter++;
+	
+	// 添加diamond
+	for(int d=0; d<diamond; d++) {
+		if(iter == coord_list.end())
+			return FAILED_TO_SPECIFY_ALL_DIAMOND;
+		
+		items[iter->x + iter->y*width] = DIAMOND;
+		iter++;
 	}
 	
-	try {
-		for(int c=0; c<coin; c++) {
-			Coord coord = GetCoordFromVector(coord_list);
-			items[coord.y*width + coord.x] = COIN;
-			coin_count++;
-		}
-	} catch(std::out_of_range& error) {
-		throw CoinTooMuch(coin_count);
+	// 添加coin
+	int coin_c = 0;
+	for(; coin_c<coin; coin_c++) {
+		if(iter == coord_list.end())
+			// TODO: 记录此处WARNING
+			break;
+		
+		items[iter->x + iter->y*width] = COIN;
+		iter++;
 	}
+	
+	return SUCCESS;
 }
 
-void ItemManager::SetCoordList(const Maze* maze) {
+void ItemManager::SetCoordList(std::vector<Coord>* coord_list) {
 	for(int y=1; y<maze->GetHeight(); y++) {
-		for(int x=1; x<maze->GetWidth(); x+=2) {
-			if(maze->GetBlock({x, y}) == ROAD && maze->GetBlock({x+1, y}) == ROAD)
-				coord_list.emplace_back(x, y);
+		for(int x=1; x<maze->GetWidth(); x++) {
+			if(maze->GetBlock({x, y}) == ROAD)
+				coord_list->emplace_back(x, y);
 		}
 	}
 }
 
-Coord ItemManager::GetCoordFromVector(std::vector<Coord>& vec) const {
-	// TODO: 更好的写法
-	/**
-	 * \brief 共调用了多少次此函数
-	 */
-	static unsigned long count = 0;
-	unsigned long size = vec.size() - count;
+int ItemManager::Init(int coin, int diamond) {
+	std::vector<Coord> coord_list;
 	
-	if(size < 1)
-		throw std::out_of_range("all extracted");
+	SetCoordList(&coord_list);
 	
-	int rand_index = rand()%size;
+	// 打乱列表
+	std::shuffle(
+		coord_list.begin(), coord_list.end(),
+		std::mt19937(std::random_device()())
+	);
 	
-	Coord temp = vec[rand_index];
-	std::rotate(vec.begin() + rand_index, vec.begin() + rand_index + 1, vec.end());
-	count++;
-	
-	return temp;
+	return SetItem(coin, diamond, coord_list);
 }
