@@ -34,6 +34,10 @@ int ItemManager::SetItem(int coin, int diamond, const std::vector<Coord>& coord_
 void ItemManager::SetCoordList(std::vector<Coord>* coord_list) {
 	for(int y=1; y<maze->GetHeight(); y++) {
 		for(int x=1; x<maze->GetWidth(); x++) {
+			// 不将点(1, 1)存入, 因为它是出生点
+			if(x == 1 && y == 1)
+				continue;
+			
 			if(maze->GetBlock({x, y}) == ROAD)
 				coord_list->emplace_back(x, y);
 		}
