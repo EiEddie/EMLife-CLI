@@ -39,6 +39,7 @@ public:
 			count++;
 		}
 		
+		fflush(stdout);
 		return count;
 	}
 	
@@ -63,4 +64,43 @@ public:
 		}
 	}
 };
+
+
+struct Warning {
+	char msg[MSGSIZE];
+	
+	Warning(const char* msg) {
+		strcpy(this->msg, msg);
+	}
+};
+typedef std::list<Warning> WrnList;
+
+
+extern class WarningManager {
+private:
+	WrnList warning_list;
+	
+public:
+	inline int PrintAll() {
+		int count = 0;
+		
+		for(Warning wrn: warning_list) {
+			printf("\033[33m[WARNING] %s\033[0m\n", wrn.msg);
+			count++;
+		}
+		
+		fflush(stdout);
+		return count;
+	}
+	
+	inline void CreateFailedToSpecifyAllCoin(int coin_count) {
+		char buf[MSGSIZE];
+		snprintf(
+			buf, MSGSIZE,
+			"Only %d coins can be added because the path length is insufficient.",
+			coin_count
+		);
+		warning_list.emplace_back(buf);
+	}
+} warning_manager;
 #endif //EMLIFE_EMLEXCEPT_H

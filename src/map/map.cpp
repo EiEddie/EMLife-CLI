@@ -1,5 +1,7 @@
 #include <EMLife/EMLife.h>
 
+WarningManager warning_manager;
+
 int ItemManager::SetItem(int coin, int diamond, const std::vector<Coord>& coord_list) {
 	auto iter = coord_list.begin();
 	
@@ -20,9 +22,11 @@ int ItemManager::SetItem(int coin, int diamond, const std::vector<Coord>& coord_
 	// 添加coin
 	int coin_c = 0;
 	for(; coin_c<coin; coin_c++) {
-		if(iter == coord_list.end())
-			// TODO: 记录此处WARNING
+		if(iter == coord_list.end()) {
+			// 记录警告
+			warning_manager.CreateFailedToSpecifyAllCoin(coin_c);
 			break;
+		}
 		
 		items[iter->x + iter->y*width] = COIN;
 		iter++;
