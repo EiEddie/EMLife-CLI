@@ -2,16 +2,19 @@
 #include <gtest/gtest.h>
 #include "test_maze.h"
 
-TEST(EMLifeTest, test_maze) {
+TEST(EMLifeTest, test_map_items) {
 	setlocale(LC_ALL, "");
+	
 	MazeBuilder mb;
 	
 	int width = 11, height = 11;
 	
 	Maze* maze = mb.GetMaze(width, height);
-//	const wchar_t* str = maze->GetMazeStr();
-//	printf("%ls\n", str);
 	ShowMaze(maze);
+	
+	ItemManager im(maze);
+	im.Init(10, 10);
+	ShowItems(&im);
+	
 	mb.DestroyMaze(maze);
-//	delete[] str;
 }
