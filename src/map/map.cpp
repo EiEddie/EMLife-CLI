@@ -1,6 +1,9 @@
 #include <EMLife/EMLife.h>
+#include <EMLife/map.h>
+
 
 WarningManager warning_manager;
+
 
 int ItemManager::SetItem(int coin, int diamond, const std::vector<Coord>& coord_list) {
 	auto iter = coord_list.begin();
@@ -46,4 +49,39 @@ void ItemManager::SetCoordList(std::vector<Coord>* coord_list) {
 				coord_list->emplace_back(x, y);
 		}
 	}
+}
+
+
+void DemonManager::CreateTree(
+		Coord coord,
+		Node* last, Node*& now,
+		const Maze* maze, const Coord& endpoint
+) {
+	if(maze->GetBlock(coord) != ROAD)
+		return;
+	
+	if(now == nullptr)
+		now = new Node(coord);
+	now->last = last;
+	
+	// 储存终点节点位置
+	if(now->value == endpoint)
+		maze_endpoint = now;
+	
+	for(int i=0; i<4; i++) {
+		Coord next_coord = MoveCoord(coord, i);
+		// 如果此位置已被记录, 跳过
+		if(last != nullptr) {
+			if(last->value == next_coord)
+				continue;
+		}
+		
+		CreateTree(next_coord, now, now->next[i], maze, endpoint);
+	}
+}
+
+void DemonManager::Init(const Maze* maze, const Coord& endpoint, int demon_step_count) {
+	CreateTree({1, 1}, nullptr, point_tree, maze, endpoint);
+	
+	// TODO: 添加demon
 }

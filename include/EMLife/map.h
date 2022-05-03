@@ -4,55 +4,6 @@
 
 #ifndef EMLIFE_MAP_H
 #define EMLIFE_MAP_H
-//enum WallId {
-//	WALL_UP                 = 0b0001,
-//	WALL_DOWN               = 0b0010,
-//	WALL_DOWN_UP            = 0b0011,
-//	WALL_LEFT               = 0b0100,
-//	WALL_LEFT_UP            = 0b0101,
-//	WALL_LEFT_DOWN          = 0b0110,
-//	WALL_LEFT_DOWN_UP       = 0b0111,
-//	WALL_RIGHT              = 0b1000,
-//	WALL_RIGHT_UP           = 0b1001,
-//	WALL_RIGHT_DOWN         = 0b1010,
-//	WALL_RIGHT_DOWN_UP      = 0b1011,
-//	WALL_RIGHT_LEFT         = 0b1100,
-//	WALL_RIGHT_LEFT_UP      = 0b1101,
-//	WALL_RIGHT_LEFT_DOWN    = 0b1110,
-//	WALL_RIGHT_LEFT_DOWN_UP = 0b1111
-//};
-//
-//
-//struct WallsChar {
-//private:
-//	constexpr static wchar_t walls[0b1111 + 1] = {
-//		L'\u0020', // VOID
-//		L'\u2575', // UP
-//		L'\u2577', // DOWN
-//		L'\u2502', // DOWN_UP
-//		L'\u2574', // LEFT
-//		L'\u2518', // LEFT_UP
-//		L'\u2510', // LEFT_DOWN
-//		L'\u2524', // LEFT_DOWN_UP
-//		L'\u2576', // RIGHT
-//		L'\u2514', // RIGHT_UP
-//		L'\u250c', // RIGHT_DOWN
-//		L'\u251c', // RIGHT_DOWN_UP
-//		L'\u2500', // WALL_RIGHT_LEFT
-//		L'\u2534', // RIGHT_LEFT_UP
-//		L'\u252c', // RIGHT_LEFT_DOWN
-//		L'\u253c'  // RIGHT_LEFT_DOWN_UP
-//	};
-//
-//public:
-//	static wchar_t Get(int id) {
-//		return walls[id];
-//	}
-//
-//	static wchar_t Get(WallId id) {
-//		return walls[id];
-//	}
-//};
 
 
 enum Block {
@@ -349,6 +300,55 @@ private:
 			return path[coord_index];
 		}
 	};
+	
+	
+	struct Node {
+		Node* last = nullptr;
+		Node* next[4] = {nullptr};
+		
+		Coord value;
+		
+		Node(const Coord& coord) {
+			value = coord;
+		}
+		
+		~Node() {
+			for(Node*& i: next)
+				delete i;
+		}
+	};
+	
+	Node* point_tree = nullptr;
+	
+	Node* maze_endpoint = nullptr;
+	
+	private:
+	static inline Coord MoveCoord(Coord coord, int dir, int step= 1) {
+		Coord dirs[4] = {
+			{ 1,  0}, // RIGHT
+			{-1,  0}, // LEFT
+			{ 0,  1}, // DOWN
+			{ 0, -1}  // UP
+		};
+		
+		coord.x += dirs[dir].x*step;
+		coord.y += dirs[dir].y*step;
+		
+		return coord;
+	}
+	
+	void CreateTree(
+			Coord coord,
+			Node* last, Node*& now,
+			const Maze* maze, const Coord& endpoint
+	);
+	
+public:
+	~DemonManager() {
+		delete point_tree;
+	}
+	
+	void Init(const Maze* maze, const Coord& endpoint, int demon_step_count=5);
 };
 
 
