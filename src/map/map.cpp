@@ -80,6 +80,14 @@ void DemonManager::CreateTree(
 	}
 }
 
+int DemonManager::SetDemon(const Node* pos, int steps) {
+	// 如果是树的根部
+	if(pos->last == nullptr)
+		return -1;
+	
+	// FIXME: 完成函数
+}
+
 void DemonManager::Init(const Maze* maze, const Coord& endpoint, int demon_step_count) {
 	CreateTree({1, 1}, nullptr, point_tree, maze, endpoint);
 	

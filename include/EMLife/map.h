@@ -235,6 +235,8 @@ public:
 #else
 private:
 #endif // DEBUG
+	int demon_count = 0;
+	
 	/**
 	 * \brief 怪物
 	 */
@@ -284,13 +286,13 @@ private:
 		
 		/**
 		 * \return 是否成功设置
-		 * \retval  1 成功
+		 * \retval  0 成功
 		 * \retval -1 失败: 下标越界
 		 */
 		inline int SetPath(int index, const Coord& coord) {
 			if(index > -1 && index < step_count) {
 				path[index] = coord;
-				return 1;
+				return SUCCESS;
 			} else {
 				return -1;
 			}
@@ -299,7 +301,7 @@ private:
 		inline Coord GetPos() {
 			return path[coord_index];
 		}
-	};
+	}* demons = nullptr;
 	
 	
 	struct Node {
@@ -322,7 +324,7 @@ private:
 	
 	Node* maze_endpoint = nullptr;
 	
-	private:
+private:
 	static inline Coord MoveCoord(Coord coord, int dir, int step= 1) {
 		Coord dirs[4] = {
 			{ 1,  0}, // RIGHT
@@ -337,14 +339,32 @@ private:
 		return coord;
 	}
 	
+	/**
+	 * \brief 根据迷宫创建树
+	 */
 	void CreateTree(
 			Coord coord,
 			Node* last, Node*& now,
 			const Maze* maze, const Coord& endpoint
 	);
 	
+	/**
+	 * \brief 在指定节点创建demon
+	 *
+	 * \param steps 步数
+	 *
+	 * \retval  0 成功
+	 * \retval -1 失败: 不是岔路
+	 * \retval -2 失败: 位置不够
+	 */
+	int SetDemon(const Node* pos, int steps);
+	
 public:
+	explicit DemonManager(int demon_count):
+	demons(new Demon[demon_count]) {}
+	
 	~DemonManager() {
+		delete[] demons;
 		delete point_tree;
 	}
 	
